@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skincare Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root { --white:#FFFFFF;--black:#242424;--green:#A2AD61;--pink:#DA95AA;--red:#BD5D5E;--light-pink:#E9C9D4;--lime:#D8DD80;--cream:#F1E8C1; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--white);color:var(--black)}
+  .container{max-width:920px;margin:0 auto}
+  h1{font-family:'Anton',sans-serif;font-size:clamp(52px,11vw,90px);line-height:.88;text-transform:uppercase;letter-spacing:-1px;padding:32px 20px 0}
+  .subtitle{font-size:12px;color:#888;letter-spacing:.8px;text-transform:uppercase;font-weight:500;padding:8px 20px 20px}
+  .tabs{display:flex;border-top:1.5px solid var(--black);border-bottom:1.5px solid var(--black);position:sticky;top:0;z-index:10;background:var(--white)}
+  .tab-btn{flex:1;padding:13px 8px;border:none;background:transparent;color:var(--black);font-family:'Anton',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .15s}
+  .tab-btn:first-child{border-right:1px solid #24242430}
+  .tab-btn.active{background:var(--black);color:var(--white)}
+  .tab-content{display:none}.tab-content.active{display:block}
+  .routine-grid{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--black)}
+  .col-header{font-family:'Anton',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.5px;padding:14px 18px;background:var(--black);color:var(--white);border-bottom:1.5px solid var(--black)}
+  .col-header:first-child{border-right:1.5px solid var(--black)}
+  .cell{padding:16px 18px;border-bottom:1.5px solid var(--black);min-height:110px}
+  .cell:nth-child(odd){border-right:1.5px solid var(--black)}
+  .day-label{font-family:'Anton',sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#999;margin-bottom:10px}
+  .step{display:flex;align-items:flex-start;gap:7px;margin-bottom:6px;line-height:1.4}
+  .step-num{font-weight:600;font-size:10px;color:#aaa;min-width:15px;padding-top:2px}
+  .product-name{font-weight:600;font-size:12.5px}
+  .product-detail{font-size:11px;color:#888;font-style:italic;margin-top:1px}
+  .tag{display:inline-block;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 6px;border-radius:3px;margin-left:4px;vertical-align:middle;position:relative;top:-1px}
+  .tag-cleanse{background:var(--cream);color:#5A5030}
+  .tag-exfoliate{background:var(--lime);color:#3D3F1A}
+  .tag-hydrate{background:var(--green);color:#fff}
+  .tag-treat{background:var(--red);color:#fff}
+  .tag-protect{background:var(--light-pink);color:#4A2A35}
+  .tag-mask{background:var(--pink);color:#fff}
+  .tag-soothe{background:#c8d6b0;color:#2d3a1f}
+  .new-badge{font-size:9px;font-weight:700;color:var(--red);margin-left:4px}
+  .legend{display:flex;flex-wrap:wrap;gap:7px;padding:18px 20px;justify-content:center}
+  .legend .tag{margin-left:0;font-size:9px}
+  .goals-grid{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--black);margin:0 0 24px}
+  .goals-cell{padding:16px 18px}
+  .goals-cell:first-child{border-right:1.5px solid var(--black)}
+  .goals-title{font-family:'Anton',sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#999;margin-bottom:8px}
+  .goals-list{font-size:12px;line-height:1.8}
+  .audit-section{padding:20px}
+  .audit-intro{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px}
+  .audit-card{margin-bottom:14px;padding:16px;border-radius:10px;border:1.5px solid}
+  .audit-card.safe{border-color:#A2AD6140;background:#A2AD6108}
+  .audit-card.caution{border-color:#F1E8C1;background:#F1E8C140}
+  .audit-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px}
+  .audit-name{font-size:14px;font-weight:700}
+  .audit-notes{font-size:12px;color:#555;line-height:1.6}
+  .verdict{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+  .verdict-safe{background:var(--green);color:#fff}
+  .verdict-caution{background:var(--cream);color:#5A5030}
+  .flag{font-size:11px;color:var(--red);margin-top:4px;display:flex;align-items:flex-start;gap:4px}
+  .audit-summary{padding:16px;border-radius:10px;background:#E9C9D430;border:1.5px solid #DA95AA30;margin-top:8px}
+  .audit-summary-title{font-size:13px;font-weight:700;margin-bottom:6px}
+  .audit-summary-text{font-size:12px;color:#555;line-height:1.7}
+  @media(max-width:600px){h1{font-size:48px;padding:24px 16px 0}.subtitle{padding:6px 16px 16px}.cell{padding:12px 12px;min-height:90px}.product-name{font-size:11.5px}.col-header{font-size:16px;padding:10px 12px}.tab-btn{font-size:13px;padding:11px 6px}.goals-cell{padding:12px 12px}.audit-section{padding:16px}.audit-header{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Skincare<br>routine.</h1>
+  <div class="subtitle">Oily &bull; Sensitive &bull; Acne-Prone &bull; Texture &amp; Pores &bull; Canada 🍁</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('routine')">Routine</button>
+    <button class="tab-btn" onclick="switchTab('audit')">Makeup Audit</button>
+  </div>
+
+  <div id="tab-routine" class="tab-content active">
+    <div class="routine-grid">
+      <div class="col-header">Daytime</div>
+      <div class="col-header">Nighttime</div>
+
+      <!-- MON -->
+      <div class="cell"><div class="day-label">Monday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Medicube Succinic Acid Pads</span><span class="tag tag-exfoliate">Exfoliate</span><div class="product-detail">Focus on forehead + nose bridge</div></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span><div class="product-detail">Optional AM — if skin feels irritated</div></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Monday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Mediheal Collagen Pad</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+      </div>
+
+      <!-- TUE -->
+      <div class="cell"><div class="day-label">Tuesday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Medicube Succinic Acid Pads</span><span class="tag tag-exfoliate">Exfoliate</span><div class="product-detail">Focus on forehead + nose bridge</div></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Tuesday — Retinoid Night</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">The Ordinary Retinol 0.5% in Squalane</span><span class="tag tag-treat">Treat</span><span class="new-badge">★ NEW</span><div class="product-detail">Apply OVER moisturizer for first month (~$8 CAD)</div></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Eye cream + Abib PDRN Patches</span><span class="tag tag-treat">Treat</span></div></div>
+      </div>
+
+      <!-- WED -->
+      <div class="cell"><div class="day-label">Wednesday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Mediheal Collagen Pad</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span><div class="product-detail">Optional AM — if skin feels irritated</div></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Wednesday — Acid Night</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Medicube Succinic Acid Pads</span><span class="tag tag-exfoliate">Exfoliate</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+      </div>
+
+      <!-- THU -->
+      <div class="cell"><div class="day-label">Thursday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Medicube Succinic Acid Pads</span><span class="tag tag-exfoliate">Exfoliate</span><div class="product-detail">Focus on forehead + nose bridge</div></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Thursday — Retinoid Night</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">The Ordinary Retinol 0.5% in Squalane</span><span class="tag tag-treat">Treat</span><span class="new-badge">★ NEW</span><div class="product-detail">Apply OVER moisturizer for first month</div></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Eye cream + Abib PDRN Patches</span><span class="tag tag-treat">Treat</span></div></div>
+      </div>
+
+      <!-- FRI -->
+      <div class="cell"><div class="day-label">Friday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Mediheal Collagen Pad</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Friday — Acid Night</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">Medicube Succinic Acid Pads</span><span class="tag tag-exfoliate">Exfoliate</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+      </div>
+
+      <!-- SAT -->
+      <div class="cell"><div class="day-label">Saturday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span><div class="product-detail">Even on no-makeup days!</div></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell"><div class="day-label">Saturday — Mask Night (rest)</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Biodance Collagen Mask</span><span class="tag tag-mask">Mask</span><div class="product-detail">No acids or retinoid tonight</div></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">Eye cream + Abib PDRN Patches</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+      </div>
+
+      <!-- SUN -->
+      <div class="cell" style="border-bottom:none"><div class="day-label">Sunday</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Water rinse</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Mediheal Collagen Pad</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span><div class="product-detail">Optional AM</div></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">SPF moisturizer</span><span class="tag tag-protect">Protect</span></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Clean glasses frames</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+      </div>
+      <div class="cell" style="border-bottom:none"><div class="day-label">Sunday — Retinoid Night</div>
+        <div class="step"><span class="step-num">1.</span><div><span class="product-name">Oil cleanser / micellar</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">2.</span><div><span class="product-name">Dermalogica Special Cleansing Gel</span><span class="tag tag-cleanse">Cleanse</span></div></div>
+        <div class="step"><span class="step-num">3.</span><div><span class="product-name">SKIN1004 Tea-Trica Ampoule</span><span class="tag tag-soothe">Soothe</span><span class="new-badge">★ NEW</span></div></div>
+        <div class="step"><span class="step-num">4.</span><div><span class="product-name">Torriden Dive-In Moisturizer</span><span class="tag tag-hydrate">Hydrate</span></div></div>
+        <div class="step"><span class="step-num">5.</span><div><span class="product-name">The Ordinary Retinol 0.5% in Squalane</span><span class="tag tag-treat">Treat</span><span class="new-badge">★ NEW</span><div class="product-detail">Apply OVER moisturizer for first month</div></div></div>
+        <div class="step"><span class="step-num">6.</span><div><span class="product-name">Eye cream</span><span class="tag tag-treat">Treat</span></div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="tag tag-cleanse">Cleanse</span>
+      <span class="tag tag-exfoliate">Exfoliate</span>
+      <span class="tag tag-hydrate">Hydrate</span>
+      <span class="tag tag-soothe">Soothe</span>
+      <span class="tag tag-treat">Treat</span>
+      <span class="tag tag-protect">Protect</span>
+      <span class="tag tag-mask">Mask</span>
+    </div>
+
+    <div class="goals-grid">
+      <div class="goals-cell">
+        <div class="goals-title">Goals</div>
+        <div class="goals-list">Reduce texture &amp; smooth pores ✓<br>Fade post-acne marks &amp; redness<br>Clear closed comedones (forehead)<br>Manage hormonal cheek breakouts<br>Address glasses-area acne mechanica</div>
+      </div>
+      <div class="goals-cell">
+        <div class="goals-title">Notes</div>
+        <div class="goals-list"><span class="new-badge" style="margin-left:0">★ NEW</span> = products to add<br>TO Retinol: Tue/Thu/Sun PM, over moisturizer<br>Tea-Trica ampoule: every PM, optional AM<br>NEVER mix retinol + acids same night<br>Medicube: focus swipe on forehead + nose<br>Clean glasses frames every morning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ MAKEUP AUDIT ══════════ -->
+  <div id="tab-audit" class="tab-content">
+    <div class="audit-section">
+      <div class="audit-intro">Each of your daily makeup products audited for comedogenic ingredients, fragrance, and potential irritants for acne-prone skin.</div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Merit Minimalist Concealer Stick</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Explicitly formulated without comedogenic ingredients. Oil-free, fragrance-free, non-comedogenic, dermatologist-tested. Great choice for acne-prone skin.</div></div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Rhode Pocket Blush</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Contains peptides and tamanu oil for hydration. Non-comedogenic, fragrance-free, paraben-free. Widely considered acne-safe by dermatologists.</div></div>
+      <div class="audit-card caution"><div class="audit-header"><div class="audit-name">About Tone Blur Powder Pact</div><span class="verdict verdict-caution">Use With Caution</span></div><div class="audit-notes">Talc-based pressed powder. While talc itself has a low comedogenic rating, layering pressed powder over oily skin throughout the day can create buildup. Contains dimethicone (comedogenic rating 1) and nylon-12.</div><div class="flag">⚠ Talc (can contribute to buildup)</div><div class="flag">⚠ Dimethicone (low risk, rating 1)</div><div class="flag">⚠ Coconut fruit extract (low concern in this form)</div></div>
+      <div class="audit-card caution"><div class="audit-header"><div class="audit-name">Too Faced Bronzer (Chocolate Soleil)</div><span class="verdict verdict-caution">Use With Caution</span></div><div class="audit-notes">Contains cocoa powder and fragrance which can be irritating to sensitive skin. Some formulations contain ethylhexyl palmitate (comedogenic rating 4). Check your specific variant's ingredient list.</div><div class="flag">⚠ Fragrance/cocoa scent (potential irritant)</div><div class="flag">⚠ Ethylhexyl palmitate in some variants (rating 4)</div><div class="flag">⚠ Talc base</div></div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Dae Hair Wand (for brows)</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Hair styling product used on brows — minimal skin contact. Low risk as long as you're not pressing it into the skin heavily.</div></div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Benefit Benetint</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Water-based tint with a very simple, lightweight formula. Considered acne-safe by multiple estheticians. Oil-free, silicone-free. Contains fragrance (parfum) which could irritate very sensitive skin, but the formula is minimal.</div><div class="flag">⚠ Fragrance/parfum (minor sensitivity risk)</div><div class="flag">⚠ Methylparaben (preservative, generally safe)</div></div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Summer Fridays Lip Butter Balm</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Lips only — no comedogenic concern for facial skin. Contains shea butter and murumuru butter for hydration. Just avoid smearing it on your cheeks.</div></div>
+      <div class="audit-card safe"><div class="audit-header"><div class="audit-name">Kiss Me Heroine Make Mascara</div><span class="verdict verdict-safe">Acne-Safe</span></div><div class="audit-notes">Eye area only. Anhydrous (water-free) formula with conditioning oils like argan, camellia, and rosehip. Non-irritating formulation suitable for sensitive eyes.</div></div>
+      <div class="audit-summary"><div class="audit-summary-title">Overall Assessment</div><div class="audit-summary-text">Your makeup lineup is quite good for acne-prone skin. The Merit concealer and Rhode blush are both solid choices. The two products to keep an eye on are the <strong>About Tone powder</strong> (avoid heavy re-application — blotting papers are better for oil control) and the <strong>Too Faced bronzer</strong> (check your specific shade for ethylhexyl palmitate). Your lip, eye, and brow products are all low-risk since they don't sit on acne-prone areas.</div></div>
+    </div>
+  </div>
+</div>
+<script>function switchTab(t){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');document.querySelectorAll('.tab-btn')[t==='routine'?0:1].classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}</script>
+</body>
+</html>
